@@ -2,15 +2,16 @@
 #define VECTOR_H
 
 #include "common.h"
+#include <stdbool.h>
 
-#define GROWTH       2 // How fast will Vector growth when full (x2)
-#define DEFAULT_SIZE 8 // Default size and capacity
+#define GROWTH           2  // How fast will Vector growth when full (x2)
+#define DEFAULT_CAPACITY 16 // Default Capacity
 
 typedef struct Vector {
     void *data;
     u32  elem_size; // Size of user data that want to store
-    u32  lenght;    // The current size of Vector
-    u32  capacity;  // The actual malloced size of Vector
+    u32  length;    // The current length of Vector
+    u32  capacity;  // The actual malloced length of Vector
 } Vector;
 
 
@@ -19,7 +20,7 @@ typedef enum Vector_Status {
     VECTOR_SUCCESS = 0,       // All went well
     VECTOR_ERR_ALLOC,         // Memory managment failed (malloc, calloc, realloc)
     VECTOR_ERR_NULL_PTR,      // (NULL) pointer arg
-    VECTOR_ERR_INVALID_SIZE,  // Element size was (0)
+    VECTOR_ERR_INVALID_SIZE,  // Element size or Capacity was (0)
     VECTOR_ERR_EMPTY,         // Empty Vector
     VECTOR_ERR_MAX_LENGHT,    // Max Lenght has already reached (canot malloc more)
     VECTOR_ERR_OUT_OF_BOUNDS, // Out of bounds
@@ -27,7 +28,7 @@ typedef enum Vector_Status {
 
 
 /**
- * @brief Create a Vector with Default capacity.
+ * @brief Create a Vector with Default capacity. `length` set to 0
  * @param elem_size Size of the data type in bytes. e.g `sizeof(int)`, `sizeof(struct)`, etc
  * @retval VECTOR_SUCCESS
  * @retval VECTOR_ERR_INVALID_SIZE
@@ -37,7 +38,7 @@ typedef enum Vector_Status {
 Vector_Status vector_create_default(Vector *vector, const u32 elem_size);
 
 /**
- * @brief Create a Vector with given capacity
+ * @brief Create a Vector with given Capacity. `length` set to 0
  * @param elem_size Size of the data type in bytes. e.g `sizeof(int)`, `sizeof(struct)`, etc
  * @retval VECTOR_SUCCESS
  * @retval VECTOR_ERR_INVALID_SIZE
@@ -47,11 +48,17 @@ Vector_Status vector_create_default(Vector *vector, const u32 elem_size);
 Vector_Status vector_create_reserve(Vector *vector, const u32 elem_size, const u32 capacity);
 
 /**
- * @brief Destroy the Vector. Dealocate everything
+ * @brief Destroy the Vector. Dealocate everything. Set `data` to `NULL`
  * @param destroy_func User given custom free function to avoid memory leaks. `NULL` if Vector data-type no need it
  * @retval VECTOR_SUCCESS
  * @retval VECTOR_ERR_NULL_PTR
 */
 Vector_Status vector_destroy(Vector *vector, void (* destroy_func)(void *));
+
+// TODO: make it return Vector_Status
+/**
+ * @brief Check if a Vector is empty
+*/
+bool vector_empty(const Vector *vector);
 
 #endif
