@@ -1,11 +1,12 @@
+/* We can never have overflow with elem_size * capacity */
+
 #ifndef VECTOR_H
 #define VECTOR_H
 
 #include "common.h"
 #include <stdbool.h>
 
-#define GROWTH           2  // How fast will Vector growth when full (x2)
-#define DEFAULT_CAPACITY 16 // Default Capacity
+#define DEFAULT_CAPACITY 8 // Default Capacity
 
 typedef struct Vector {
     void *data;
@@ -22,7 +23,7 @@ typedef enum Vector_Status {
     VECTOR_ERR_NULL_PTR,      // (NULL) pointer arg
     VECTOR_ERR_INVALID_SIZE,  // Element size or Capacity was (0)
     VECTOR_ERR_EMPTY,         // Empty Vector
-    VECTOR_ERR_MAX_LENGHT,    // Max Lenght has already reached (canot malloc more)
+    VECTOR_ERR_MAX_CAPACITY,    // Max Capacity has already reached (canot malloc more)
     VECTOR_ERR_OUT_OF_BOUNDS, // Out of bounds
 } Vector_Status;
 
@@ -54,6 +55,28 @@ Vector_Status vector_create_reserve(Vector *vector, const u32 elem_size, const u
  * @retval VECTOR_ERR_NULL_PTR
 */
 Vector_Status vector_destroy(Vector *vector, void (* destroy_func)(void *));
+
+/**
+ * @brief Deallocate memory for each element of the Vector (if needed). Does not dealocate `void *data` itself.
+ * Set `length` to 0.
+ * @param destroy_func User given custom free function to avoid memory leaks. `NULL` if Vector data-type no need it
+ * @retval VECTOR_SUCCESS
+ * @retval VECTOR_ERR_NULL_PTR
+ * @note Performance function.
+*/
+Vector_Status vector_clear(Vector *vector, void (* destroy_func)(void *));
+
+/**
+ * @brief Push element at the end of Vector.
+ * @param value Must be data same size of `elem_size` that used in `vector_creat()`.
+ * @retval VECTOR_SUCCESS
+ * @retval VECTOR_ERR_NULL_PTR
+ * @retval VECTOR_ERR_ALLOC
+ * @retval VECTOR_ERR_MAX_LENGHT
+ * @note It does a shallow copy of the `value` you pass in the Vector.
+*/
+Vector_Status vector_push_back(Vector *vector, void *value);
+
 
 // TODO: make it return Vector_Status
 /**
