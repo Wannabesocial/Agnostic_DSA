@@ -36,54 +36,57 @@ void test_vector_growth_all(){
 
 static void test_vector_growth_errors(){
 
-    Vector vec;
+    Vector *vec = NULL;
 
     assert(vector_create_reserve(&vec, UINT32_MAX, 2) == VECTOR_SUCCESS);
-    vec.capacity = 6;
-    assert(vector_growth(&vec) == VECTOR_ERR_ALLOC);
+    vec->capacity = 6;
+    assert(vector_growth(vec) == VECTOR_ERR_ALLOC);
     assert(vector_destroy(&vec, NULL) == VECTOR_SUCCESS);
 }
 
 static void test_vector_growth_normal(){
 
-    Vector vec;
+    Vector *vec = NULL;
     test_struct2 *arr;
 
     assert(vector_create_reserve(&vec, sizeof(test_struct2), UINT8_MAX) == VECTOR_SUCCESS);
 
-    vec.length = 3;
-    arr = (test_struct2 *) vec.data;
-    for(u32 i = 0; i < vec.length; i++){
+    vec->length = 3;
+    arr = (test_struct2 *) vec->data;
+    for(u32 i = 0; i < vec->length; i++){
         arr[i].x = i + 8;
         arr[i].y = i + 9;
     }
 
-    assert(vector_growth(&vec) == VECTOR_SUCCESS);
-    arr = (test_struct2 *) vec.data;
-    for(u32 i = 0; i < vec.length; i++){
-        assert(arr[i].x == i + 8);
-        assert(arr[i].y == i + 9);
+    assert(vector_growth(vec) == VECTOR_SUCCESS);
+    arr = (test_struct2 *) vec->data;
+    for(u32 i = 0; i < vec->length; i++){
+        assert(arr[i].x == i + 8
+            && arr[i].y == i + 9);
     }
-    assert(vec.capacity == UINT8_MAX << 1);
+    assert(vec->capacity == UINT8_MAX << 1);
 
     assert(vector_destroy(&vec, NULL) == VECTOR_SUCCESS);
 }
 
 static void test_vector_growth_complex(){
 
-    Vector vec;
+    Vector *vec = NULL;
     test_struct1 *arr;
     int *temp[3];
     int size = 10;
 
     assert(vector_create_reserve(&vec, sizeof(test_struct1), UINT8_MAX) == VECTOR_SUCCESS);
 
-    vec.length = 3;
-    arr = (test_struct1 *) vec.data;
-    for(u32 i = 0; i < vec.length; i++){
+    vec->length = 3;
+    arr = (test_struct1 *) vec->data;
+    for(u32 i = 0; i < vec->length; i++){
         arr[i].size = size;
-        arr[i].a = (int *)malloc(size * sizeof(int));
-        if(arr[i].a == NULL) { printf("[FAIL] growth"); exit(EXIT_FAILURE); }
+        arr[i].a = (int *) malloc(size * sizeof(int));
+        if(arr[i].a == NULL) {
+            printf("[FAIL] growth");
+            exit(EXIT_FAILURE);
+        }
 
         for(int j = 0; j < size; j++){
             arr[i].a[j] = i;
@@ -91,17 +94,18 @@ static void test_vector_growth_complex(){
         temp[i] = arr[i].a;
     }
 
-    assert(vector_growth(&vec) == VECTOR_SUCCESS);
-    arr = (test_struct1 *) vec.data;
-    for(u32 i = 0; i < vec.length; i++){
-        assert(arr[i].size == size);
-        assert(arr[i].a == temp[i]);
+    assert(vector_growth(vec) == VECTOR_SUCCESS);
+
+    arr = (test_struct1 *) vec->data;
+    for(u32 i = 0; i < vec->length; i++){
+        assert(arr[i].size == size
+            && arr[i].a == temp[i]);
 
         for(int j = 0; j < size; j++){
             assert(arr[i].a[j] == i);
         }
     }
-    assert(vec.capacity == UINT8_MAX << 1);
+    assert(vec->capacity == UINT8_MAX << 1);
 
     assert(vector_destroy(&vec, &delete_struct) == VECTOR_SUCCESS);
 }

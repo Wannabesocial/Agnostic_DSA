@@ -16,22 +16,24 @@ void test_vector_empty_all(){
 
 static void test_vector_empty(){
 
-    Vector vec;
+    Vector *vec = NULL;
     u32 elem_size = 20;
 
+    assert(vector_empty(NULL) == true); // Use bolletproof
+
     assert(vector_create_default(&vec, elem_size) == VECTOR_SUCCESS);
-    assert(vector_empty(&vec) == true);
+    assert(vector_empty(vec) == true);
     assert(vector_destroy(&vec, NULL) == VECTOR_SUCCESS);
 }
 
 static void test_vector_not_empty(){
 
-    Vector vec;
+    Vector *vec;
     u32 elem_size = 20;
 
     assert(vector_create_default(&vec, elem_size) == VECTOR_SUCCESS);
 
-    vec.length = 1; // Fake object push
-    assert(vector_empty(&vec) == false);
+    vec->length = 1; // Fake object push
+    assert(vector_empty(vec) == false);
     assert(vector_destroy(&vec, NULL) == VECTOR_SUCCESS);
 }
