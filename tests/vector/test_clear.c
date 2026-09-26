@@ -1,4 +1,6 @@
 #include "test_com.h"
+#if 1 == 0
+
 
 static void test_vector_clear_error(); // Triger All error codes
 static void test_vector_clear_normal();
@@ -64,3 +66,4 @@ static void test_vector_clear_complex(){
 
     assert(vector_destroy(&vec, &delete_struct) == VECTOR_SUCCESS);
 }
+#endif

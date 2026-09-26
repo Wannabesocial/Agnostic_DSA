@@ -1,12 +1,22 @@
 # --- Μεταβλητές Μεταγλώττισης ---
 CC       := gcc
-CFLAGS   := -Wall -Iinc
+STD      := -std=c11
+
+# Αυστηρά Flags Προειδοποιήσεων & Ασφάλειας
+WARN     := -Wall -Wextra -Wpedantic \
+            -Wshadow -Wconversion -Wsign-conversion \
+            -Wunused -Wvla
+
+# Flags Εντοπισμού Σφαλμάτων & Μνήμης (Sanitizers)
+DEBUG    := -g3 -fsanitize=address,undefined
+
+CFLAGS   := $(STD) $(WARN) $(DEBUG) -Iinc
 
 # --- Φάκελοι ---
 SRC_DIR  := src
 INC_DIR  := inc
 TEST_DIR := tests
-OBJ_DIR  := obj
+BIN_DIR  := bin
 
 # --- ΛΙΣΤΑ DSA MODULES ---
 MODULES  := vector
@@ -15,38 +25,41 @@ MODULES  := vector
 COMMON_SOURCES := 
 
 # --- Παραγωγή Ονομάτων & Object Files ---
-TARGETS     := $(patsubst %, %_test, $(MODULES))
-COMMON_OBJS := $(patsubst %, $(OBJ_DIR)/%.o, $(COMMON_SOURCES))
+TARGETS      := $(patsubst %, $(BIN_DIR)/%_test, $(MODULES))
+COMMON_OBJS  := $(patsubst %, $(BIN_DIR)/%.o, $(COMMON_SOURCES))
 
 # --- Κύριοι Στόχοι (Targets) ---
-.PHONY: all clean
+.PHONY: all clean $(MODULES)
 
-# 1. Default target
+# 1. Default target (χτίζει όλα τα modules στο bin/)
 all: $(TARGETS)
 
-# 2. Κανόνας για το Linking των εκτελέσιμων (π.χ. vector_test)
-# Χρησιμοποιούμε τη $(eval) για να ορίσουμε τις ακριβείς εξαρτήσεις για κάθε module ξεχωριστά
+# 2. Στόχος για μεμονωμένο module (π.χ. 'make vector' -> χτίζει μόνο το bin/vector_test)
+$(MODULES): %: $(BIN_DIR)/%_test
+
+# 3. Κανόνας για το Linking των εκτελέσιμων μέσα στο bin/
 define MODULE_LINK_RULE
-$(1)_test: $(OBJ_DIR)/$(1).o $(COMMON_OBJS) $$(patsubst $(TEST_DIR)/$(1)/%.c, $(OBJ_DIR)/$(TEST_DIR)/$(1)/%.o, $$(wildcard $(TEST_DIR)/$(1)/*.c))
+$(BIN_DIR)/$(1)_test: $(BIN_DIR)/$(1).o $(COMMON_OBJS) $$(patsubst $(TEST_DIR)/$(1)/%.c, $(BIN_DIR)/$(TEST_DIR)/$(1)/%.o, $$(wildcard $(TEST_DIR)/$(1)/*.c))
 	$(CC) $(CFLAGS) $$^ -o $$@
 endef
 
 # Παραγωγή των κανόνων linking για όλα τα modules
 $(foreach mod,$(MODULES),$(eval $(call MODULE_LINK_RULE,$(mod))))
 
-# 3. Μεταγλώττιση των αρχείων από το src/ (π.χ. src/vector.c -> obj/vector.o)
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# 4. Μεταγλώττιση των tests (π.χ. tests/vector/main_test.c -> obj/tests/vector/main_test.o)
-$(OBJ_DIR)/$(TEST_DIR)/%.o: $(TEST_DIR)/%.c | $(OBJ_DIR)
+# 4. Μεταγλώττιση των αρχείων C από το src/ -> bin/*.o
+$(BIN_DIR)/%.o: $(SRC_DIR)/%.c | $(BIN_DIR)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# 5. Δημιουργία του αρχικού φακέλου obj
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+# 5. Μεταγλώττιση των tests -> bin/tests/<module>/*.o
+$(BIN_DIR)/$(TEST_DIR)/%.o: $(TEST_DIR)/%.c | $(BIN_DIR)
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# 6. Καθαρισμός
+# 6. Δημιουργία του φακέλου bin
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+# 7. Καθαρισμός
 clean:
-	rm -rf $(OBJ_DIR) $(TARGETS)
+	rm -rf $(BIN_DIR)

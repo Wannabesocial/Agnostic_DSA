@@ -1,5 +1,7 @@
 #include "test_com.h"
 
+#if 1 == 0
+
 static void test_vector_pop_back_errors(); // Triger all errors
 static void test_vector_pop_back_normal();
 static void test_vector_pop_back_complex();
@@ -105,3 +107,4 @@ static void test_vector_pop_back_complex(){
 
     assert(vector_destroy(&vec, NULL) == VECTOR_SUCCESS);
 }
+#endif

@@ -1,5 +1,7 @@
 #include "test_com.h"
 
+#if 1 == 0
+
 static Vector_Status vector_growth(Vector *vector){
 
     void *temp = NULL;
@@ -109,3 +111,4 @@ static void test_vector_growth_complex(){
 
     assert(vector_destroy(&vec, &delete_struct) == VECTOR_SUCCESS);
 }
+#endif

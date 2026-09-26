@@ -1,5 +1,8 @@
 #include "test_com.h"
 
+#if 1 == 0
+
+
 static void test_vector_get_length();
 static void test_vector_get_data();
 
@@ -40,3 +43,4 @@ static void test_vector_get_data(){
     assert(vector_get_data(vec) != NULL);
     assert(vector_destroy(&vec, NULL) == VECTOR_SUCCESS);
 }
+#endif

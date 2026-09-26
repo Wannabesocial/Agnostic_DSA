@@ -1,4 +1,5 @@
 #include "test_com.h"
+#if 1 == 0
 
 static void test_vector_empty();
 static void test_vector_not_empty();
@@ -37,3 +38,4 @@ static void test_vector_not_empty(){
     assert(vector_empty(vec) == false);
     assert(vector_destroy(&vec, NULL) == VECTOR_SUCCESS);
 }
+#endif

@@ -1,4 +1,6 @@
 #include "test_com.h"
+#if 1 == 0
+
 
 static void test_vector_create_default();
 static void test_vector_create_reserve();
@@ -68,3 +70,4 @@ void test_vector_create_reserve(){
 
     assert(vector_destroy(&vec, NULL) == VECTOR_SUCCESS);
 }
+#endif

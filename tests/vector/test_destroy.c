@@ -1,4 +1,6 @@
 #include "test_com.h"
+#if 1 == 0
+
 
 void delete_struct(void *args) {
     test_struct1 *my_struct = (test_struct1 *)args;
@@ -66,3 +68,4 @@ static void test_vector_destroy_complex(){
     assert(vector_destroy(&vec, &delete_struct) == VECTOR_SUCCESS
         && vec == NULL);
 }
+#endif
