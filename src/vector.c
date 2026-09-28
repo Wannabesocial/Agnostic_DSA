@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+
+
 // ===========================================================================
 // ===------------------------ Constractor Section ------------------------=== 
 // ===========================================================================
@@ -87,31 +89,20 @@ Vector_Status vector_create_reserve(Vector **vector, size_t elem_size, size_t ca
 // ===---------------------- Destractor Section --------------------------===
 // ==========================================================================
 
-Vector_Status vector_destroy(Vector **vector, void (* destroy_func)(void *))
+Vector_Status vector_destroy(Vector **vector)
 {
-    Vector *v = *vector;
-
     // Invalid user Input
     if(vector == NULL || *vector == NULL){
         return VECTOR_ERR_NULL_PTR;
     }
 
-    // No more dealocation needed. Only defaul
-    if(destroy_func == NULL){
-        goto default_dealloc;
-    }
+    // Dealocate the Data and the Data Structure
+    Vector *v = *vector;
 
-    // Dealocate base on user function
-    char *raw_data = (char *)v->data;
-    for(size_t i = 0; i < v->length; i++)
-    {
-        destroy_func((void *)(raw_data + i * v->elem_size));
-    }
-
-default_dealloc:
-    free(v->data); // Actual Data
-    free(v);       // Vector Data Structure
+    free(v->data);
+    free(v);
     *vector = NULL;
+
     return VECTOR_SUCCESS;
 }
 
@@ -155,10 +146,10 @@ static Vector_Status vector_growth(Vector *vector)
 }
 
 
-Vector_Status vector_push_back(Vector *vector, const void *value)
+Vector_Status vector_push_back(Vector *vector, const void *in_value)
 {
     // Invalid User Input
-    if(vector == NULL || value == NULL){
+    if(vector == NULL || in_value == NULL){
         return VECTOR_ERR_NULL_PTR;
     }
 
@@ -177,15 +168,15 @@ Vector_Status vector_push_back(Vector *vector, const void *value)
     }
 
     // No need to regrowth
-    char *raw_data = (char *)vector->data;
-    memcpy(raw_data + vector->length * vector->elem_size, value, vector->elem_size);
+    char *base = (char *)vector->data;
+    memcpy(base + vector->length * vector->elem_size, in_value, vector->elem_size);
     vector->length++;
 
     return VECTOR_SUCCESS;
 }
 
 
-Vector_Status vector_pop_back(Vector *vector, void *value)
+Vector_Status vector_pop_back(Vector *vector, void *out_value)
 {
     // Invalid User Input
     if(vector == NULL){
@@ -200,45 +191,32 @@ Vector_Status vector_pop_back(Vector *vector, void *value)
     vector->length--;
 
     // Do not care about result
-    if(value == NULL){
+    if(out_value == NULL){
         return VECTOR_SUCCESS;
     }
 
     // Pop the last value and save it.
-    char *raw_data = (char *)vector->data;
-    memcpy(value, raw_data + vector->length * vector->elem_size, vector->elem_size);
+    char *base = (char *)vector->data;
+    memcpy(out_value, base + vector->length * vector->elem_size, vector->elem_size);
 
     return VECTOR_SUCCESS;
 }
 
 
-Vector_Status vector_clear(Vector *vector, void (* destroy_func)(void *))
+Vector_Status vector_clear(Vector *vector)
 {
     // Invalid user Input
     if(vector == NULL){
         return VECTOR_ERR_NULL_PTR;
     }
 
-    // No dealocate needed
-    if(destroy_func == NULL){
-        goto reset_metadata;
-    }
-
-    // Dealocate base on user function
-    char *raw_data = (char *) vector->data;
-    for(size_t i = 0; i < vector->length; i++)
-    {
-        destroy_func((void *)(raw_data + i * vector->elem_size));
-    }
-
-reset_metadata:
     vector->length = 0;
     return VECTOR_SUCCESS;
 }
 
 
 // ===========================================================================
-// ===------------------------ Getteres Section ---------------------------===
+// ===------------------------ Capacity Section ---------------------------===
 // ===========================================================================
 
 bool vector_empty(const Vector *vector)
@@ -251,13 +229,18 @@ bool vector_empty(const Vector *vector)
 }
 
 
-size_t vector_get_length(const Vector *vector)
+size_t vector_length(const Vector *vector)
 {
     return (vector == NULL) ? 0 : vector->length;
 }
 
 
-void *vector_get_data(const Vector *vector)
+
+// ==========================================================================
+// ===----------------------- Element Access -----------------------------===
+// ==========================================================================
+
+void *vector_data(const Vector *vector)
 {
     return (vector == NULL) ? NULL : vector->data;
 }

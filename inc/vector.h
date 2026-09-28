@@ -1,4 +1,8 @@
-/* We can never have overflow with elem_size * capacity */
+/**
+ * This a Library for the emplemetation of a Vector Data Structure in pure C that can hold any type of data type.
+ * For this reason the ownership and the obligation of the data goes to User and not the Data Structure.
+ * This emplemetation does not allocate memory indivitualy for every data type. Works with shallow copy.
+**/
 
 #ifndef VECTOR_H
 #define VECTOR_H
@@ -16,7 +20,7 @@ typedef struct Vector {
 } Vector;
 
 
-// Error codes. See VECTOR_::
+// Error codes for Vector
 typedef enum Vector_Status {
     VECTOR_SUCCESS = 0,       // All went well
     VECTOR_ERR_ALLOC,         // Memory managment failed (malloc, calloc, realloc)
@@ -56,34 +60,30 @@ Vector_Status vector_create_reserve(Vector **vector, size_t elem_size, size_t ca
 
 
 /**
- * Destroy the Vector. Dealocate everything. Set `vector` to `NULL`
+ * Destroy the Vector. Dealocate the `Vector` data structure. Set `vector` to `NULL`
  *
- * Param:
- *  `destroy_func` User given custom free function to avoid memory leaks. `NULL` if Vector data-type no need it
  * Return:
  *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
 */
-Vector_Status vector_destroy(Vector **vector, void (* destroy_func)(void *));
+Vector_Status vector_destroy(Vector **vector);
 
 
 /**
- * Deallocate memory for each element of the Vector (if needed). Does not dealocate `void *data` itself. Set `length` to 0.
+ * Does not dealocate `void *data` itself. Just set `length` to 0.
  *
- * Param:
- *  `destroy_func` User given custom free function to avoid memory leaks. `NULL` if Vector data-type no need it
  * Return:
  *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
  *
- * Note: Performance function.
+ * Note: Performance function. Be carefull if you have a `Vector` of Pointers. 
 */
-Vector_Status vector_clear(Vector *vector, void (* destroy_func)(void *));
+Vector_Status vector_clear(Vector *vector);
 
 
 /**
  * Push element at the end of Vector.
  *
  * Param:
- *  `value` Must be a address `&` of data same size of `elem_size` that used in `vector_creat()`.
+ *  `in_value` Must be a address of data same size of `elem_size` that used in `vector_creat()`.
  * Return:
  *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
  *  VECTOR_ERR_ALLOC | VECTOR_ERR_MAX_LENGHT
@@ -91,19 +91,19 @@ Vector_Status vector_clear(Vector *vector, void (* destroy_func)(void *));
  *
  * Note: It does a shallow copy of the `value` you pass in the Vector. It uses `memcpy` to save data to Vector..
 */
-Vector_Status vector_push_back(Vector *vector, const void *value);
+Vector_Status vector_push_back(Vector *vector, const void *in_value);
 
 
 /**
  * Pop element at the end of Vector
  *
  * Param:
- *  `value` Is the variable that result will be saved. Uses `memcpy`. Use `NULL` if you do not care about saving it
+ *  `out_value` Is the variable that result will be saved. Uses `memcpy` therefore it does a shallow-copy. Use `NULL` if you do not care about saving it.
  * Return:
  *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
  *  VECTOR_ERR_EMPTY
 */
-Vector_Status vector_pop_back(Vector *vector, void *value);
+Vector_Status vector_pop_back(Vector *vector, void *out_value);
 
 
 /**
@@ -119,7 +119,7 @@ bool vector_empty(const Vector *vector);
  *
  * Note: If `vector` is `NULL` return `0`
 */
-size_t vector_get_length(const Vector *vector);
+size_t vector_length(const Vector *vector);
 
 
 /**
@@ -127,7 +127,7 @@ size_t vector_get_length(const Vector *vector);
  *
  * Note: If `vector` is `NULL` return `NULL`
 */
-void *vector_get_data(const Vector *vector);
+void *vector_data(const Vector *vector);
 
 
 #endif
