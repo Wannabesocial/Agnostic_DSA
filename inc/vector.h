@@ -13,7 +13,7 @@
 #define DEFAULT_CAPACITY 8 // Default Capacity
 
 typedef struct Vector {
-    void *data;
+    void *data;       // The actual Vector. It holds the data
     size_t elem_size; // Size of user data that want to store
     size_t length;    // The current length of Vector
     size_t capacity;  // The actual malloced length of Vector
@@ -60,23 +60,27 @@ Vector_Status vector_create_reserve(Vector **vector, size_t elem_size, size_t ca
 
 
 /**
- * Destroy the Vector. Dealocate the `Vector` data structure. Set `vector` to `NULL`
+ * Destroy the Vector. Dealocate the `Vector` data structure.
  *
  * Return:
  *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
+ *
+ * Note: Manualy Dealocate the data if needed before you call or you will have memory leaks.
 */
-Vector_Status vector_destroy(Vector **vector);
+Vector_Status vector_destroy(Vector *vector);
 
 
+#if 1 == 0
 /**
  * Does not dealocate `void *data` itself. Just set `length` to 0.
  *
  * Return:
  *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
  *
- * Note: Performance function. Be carefull if you have a `Vector` of Pointers. 
+ * Note: Performance function. Manualy Dealocate the data if needed before you call or you will have memory leaks.
 */
 Vector_Status vector_clear(Vector *vector);
+#endif 
 
 
 /**
@@ -86,7 +90,7 @@ Vector_Status vector_clear(Vector *vector);
  *  `in_value` Must be a address of data same size of `elem_size` that used in `vector_creat()`.
  * Return:
  *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
- *  VECTOR_ERR_ALLOC | VECTOR_ERR_MAX_LENGHT
+ *  VECTOR_ERR_ALLOC | VECTOR_ERR_MAX_CAPACITY
  *  VECTOR_ERR_OVERFLOW
  *
  * Note: It does a shallow copy of the `value` you pass in the Vector. It uses `memcpy` to save data to Vector..
@@ -108,26 +112,86 @@ Vector_Status vector_pop_back(Vector *vector, void *out_value);
 
 /**
  * Check if a Vector is empty.
- * 
- * Note: If `vector` is `NULL` return `true`
+ *
+ * Note: On error (pass NULL as argument) return `true`
 */
 bool vector_empty(const Vector *vector);
 
 
 /**
- * Get `length` of Vector
+ * Get the Capacity of the Vector
  *
- * Note: If `vector` is `NULL` return `0`
-*/
-size_t vector_length(const Vector *vector);
+ * Note: On error (pass NULL as argument) return 0.
+**/
+size_t vector_capacity(const Vector *vector);
 
 
 /**
- * Get `data` of Vector
+ * Get `length` of Vector
+ * 
+ * Note: On error (pass NULL as argument) return 0
+*/
+size_t vector_size(const Vector *vector);
+
+
+/**
+ * Get a pointer to the actual Vector data. (the 1st element, aka the Base)
  *
- * Note: If `vector` is `NULL` return `NULL`
+ * Note: On error (pass NULL as argument) return NULL
 */
 void *vector_data(const Vector *vector);
 
+/**
+ * Get a pointer to the actual Vector data. (the last element)
+ *
+ * Note: On error (pass NULL as argument, Vector is empty) return NULL
+*/
+void *vector_back(const Vector *vector);
+
+
+/**
+ * Get a pointer to the actual Vector data. (the idx element)
+ *
+ * Note: On error (pass NULL as argument, Vector is empty, out of range idx) return NULL. First element is idx = 0.
+*/
+void *vector_at(const Vector *vector, size_t idx);
+
+
+/**
+ * Change the `size` of the Vector. If size lower the current do nothing. If more than `capacity` realloc.
+ * 
+ * Return:
+ *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
+ *  VECTOR_ERR_ALLOC | VECTOR_ERR_OVERFLOW
+ **/
+Vector_Status vector_resize(Vector *vector, size_t new_size);
+
+
+/**
+ * Get the Max size that the Vector can hold base on System
+**/
+size_t vector_max_size();
+
+
+/**
+ * Change the `capacity` of the Vector. If lower than already existed do nothing.
+ *
+ * Return:
+ *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
+ *  VECTOR_ERR_ALLOC | VECTOR_ERR_OVERFLOW
+ *
+ *  Note: Does not change the Size-Lenght of the Vector
+**/
+Vector_Status vector_reserve(Vector *vector, size_t new_capacity);
+
+
+/**
+ * Does reallocation so the Capacity mach the Lenght
+ *
+ * Return:
+ *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
+ *  VECTOR_ERR_ALLOC
+**/
+Vector_Status vector_shrink_to_fit(Vector *vector);
 
 #endif

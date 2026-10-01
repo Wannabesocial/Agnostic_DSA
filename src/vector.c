@@ -13,7 +13,7 @@
 Vector_Status vector_create_default(Vector **vector, size_t elem_size)
 {
     // Invalid user Input
-    if(vector == NULL || *vector != NULL){
+    if(vector == NULL){
         return VECTOR_ERR_NULL_PTR;
     }
 
@@ -50,7 +50,7 @@ Vector_Status vector_create_default(Vector **vector, size_t elem_size)
 Vector_Status vector_create_reserve(Vector **vector, size_t elem_size, size_t capacity)
 {
     // Invalid user Input
-    if(vector == NULL || *vector != NULL){
+    if(vector == NULL){
         return VECTOR_ERR_NULL_PTR;
     }
 
@@ -89,19 +89,16 @@ Vector_Status vector_create_reserve(Vector **vector, size_t elem_size, size_t ca
 // ===---------------------- Destractor Section --------------------------===
 // ==========================================================================
 
-Vector_Status vector_destroy(Vector **vector)
+Vector_Status vector_destroy(Vector *vector)
 {
     // Invalid user Input
-    if(vector == NULL || *vector == NULL){
+    if(vector == NULL){
         return VECTOR_ERR_NULL_PTR;
     }
 
     // Dealocate the Data and the Data Structure
-    Vector *v = *vector;
-
-    free(v->data);
-    free(v);
-    *vector = NULL;
+    free(vector->data);
+    free(vector);
 
     return VECTOR_SUCCESS;
 }
@@ -203,6 +200,7 @@ Vector_Status vector_pop_back(Vector *vector, void *out_value)
 }
 
 
+#if 1 == 0
 Vector_Status vector_clear(Vector *vector)
 {
     // Invalid user Input
@@ -211,6 +209,39 @@ Vector_Status vector_clear(Vector *vector)
     }
 
     vector->length = 0;
+    return VECTOR_SUCCESS;
+}
+#endif
+
+
+Vector_Status vector_resize(Vector *vector, size_t new_size)
+{
+    // Invalid Input
+    if(vector == NULL){
+        return VECTOR_ERR_NULL_PTR;
+    }
+
+    // No need to realloc
+    if(new_size < vector->length)
+    {
+        vector->length = new_size;
+        return VECTOR_SUCCESS;
+    }
+
+    // Need to Realloc and Overflows
+    if(new_size > SIZE_MAX / vector->elem_size){
+        return VECTOR_ERR_OVERFLOW;
+    }
+
+    void *temp = realloc(vector->data, new_size * vector->elem_size);
+    if(temp == NULL){
+        return VECTOR_ERR_ALLOC;
+    }
+
+    vector->capacity = new_size;
+    vector->length   = new_size;
+    vector->data     = temp;
+
     return VECTOR_SUCCESS;
 }
 
@@ -225,15 +256,81 @@ bool vector_empty(const Vector *vector)
     if(vector == NULL){
         return true;
     }
+
     return (vector->length == 0) ? true : false;
 }
 
 
-size_t vector_length(const Vector *vector)
+size_t vector_size(const Vector *vector)
 {
     return (vector == NULL) ? 0 : vector->length;
 }
 
+
+size_t vector_capacity(const Vector *vector)
+{
+    return (vector == NULL) ? 0 : vector->capacity; 
+}
+
+
+size_t vector_max_size()
+{
+    return SIZE_MAX;
+}
+
+
+Vector_Status vector_reserve(Vector *vector, size_t new_capacity)
+{
+    // Invalid Input
+    if(vector == NULL){
+        return VECTOR_ERR_NULL_PTR;
+    }
+
+    // No need to Realloc
+    if(new_capacity < vector->capacity)
+    {
+        return VECTOR_SUCCESS;
+    }
+ 
+    // Need to Realloc and Overflows
+    if(new_capacity > SIZE_MAX / vector->elem_size){
+        return VECTOR_ERR_OVERFLOW;
+    }
+
+    void *temp = realloc(vector->data, new_capacity * vector->elem_size);
+    if(temp == NULL){
+        return VECTOR_ERR_ALLOC;
+    }
+
+    vector->capacity = new_capacity;
+    vector->data     = temp;
+
+    return VECTOR_SUCCESS;
+}
+
+
+Vector_Status vector_shrink_to_fit(Vector *vector)
+{
+    // Invalid Input
+    if(vector == NULL){
+        return VECTOR_ERR_NULL_PTR;
+    }
+
+    // Do nothing
+    if(vector->capacity == vector->length){
+        return VECTOR_SUCCESS;
+    } 
+
+    void *temp = realloc(vector->data, vector->elem_size * vector->length);
+    if(temp == NULL){
+        return VECTOR_ERR_ALLOC;
+    }
+
+    vector->capacity = vector->length;
+    vector->data     = temp;
+
+    return VECTOR_SUCCESS;
+}
 
 
 // ==========================================================================
@@ -244,3 +341,30 @@ void *vector_data(const Vector *vector)
 {
     return (vector == NULL) ? NULL : vector->data;
 }
+
+
+void *vector_back(const Vector *vector)
+{
+    // Invalid Input
+    if(vector == NULL || vector_empty(vector) == true){
+        return NULL;
+    }
+
+    char *base = (char *)vector->data;
+    return base + vector->elem_size * (vector->length - 1);
+}
+
+
+void *vector_at(const Vector *vector, size_t idx)
+{
+    // INvalid Input
+    if(vector == NULL || vector_empty(vector) == true || idx >= vector->length){
+        return NULL;
+    }
+
+    char *base = (char *)vector->data;
+    return base + vector->elem_size * idx;
+}
+
+
+
