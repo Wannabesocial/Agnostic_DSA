@@ -8,6 +8,22 @@ typedef struct Point {
     int y;
 } Point;
 
+void print(Vector *vec)
+{
+    Point *ptr = NULL;
+
+    printf("Size: %lu, Capacity: %lu\n", vector_size(vec), vector_capacity(vec));
+    printf("All the Vector Datas: ");
+    ptr = (Point *) vector_data(vec);
+    
+    for(size_t i = 0; i < vector_size(vec); i++)
+    {
+        printf("(%d, %d), ", ptr[i].x, ptr[i].y);
+    }
+    printf("\n\n");
+}
+
+
 int main()
 {
     printf("--- Start Vector Tests ---\n\n");
@@ -19,34 +35,25 @@ int main()
     vector_create_default(&vec, sizeof(Point));
 
 
-    p1.x = 1, p1.y = 3;
-    vector_push_back(vec, &p1);
-
-    p1.x = 10, p1.y = 20;
-    vector_push_back(vec, &p1);
-    
-    p1.x = 15, p1.y = -3;
-    vector_push_back(vec, &p1);
-
-
-    printf("All the Vector Datas: ");
-    ptr = (Point *) vector_data(vec);
-    
-    for(size_t i = 0; i < vector_size(vec); i++)
+    for(int i = 0; i < 10; i++)
     {
-        printf("(%d, %d), ", ptr[i].x, ptr[i].y);
+        p1.x = i, p1.y = i;
+        vector_push_back(vec, &p1);
     }
-    printf("\n\n");
+    print(vec);
 
-    printf("Last Element: ");
-    ptr = (Point *) vector_back(vec);
-    printf("(%d, %d)\n", ptr->x, ptr->y);
+    vector_erase(vec, 0, &p1);
+    printf("Remove (%d, %d)\n\n", p1.x, p1.y);
+    print(vec);
 
-    vector_pop_back(vec, NULL);
-    printf("Last Element: ");
-    ptr = (Point *) vector_back(vec);
-    printf("(%d, %d)\n", ptr->x, ptr->y);
+    vector_erase(vec, 2, &p1);
+    printf("Remove (%d, %d)\n\n", p1.x, p1.y);
+    print(vec);
 
+    vector_erase(vec, 2, &p1);
+    printf("Remove (%d, %d)\n\n", p1.x, p1.y);
+    print(vec);
+    
 
     vector_destroy(vec);
 

@@ -246,6 +246,75 @@ Vector_Status vector_resize(Vector *vector, size_t new_size)
 }
 
 
+Vector_Status vector_insert(Vector *vector, size_t idx, void *in_value)
+{
+    // Invalid Input
+    if(vector == NULL || in_value == NULL){
+        return VECTOR_ERR_NULL_PTR;
+    }
+
+    if(idx >= vector->length){
+        return VECTOR_ERR_OUT_OF_BOUNDS;
+    }
+
+    // Need growth
+    if(vector->length == vector->capacity)
+    {
+        // Mac Capacity Already Reached
+        if(vector->capacity == SIZE_MAX){
+            return VECTOR_ERR_MAX_CAPACITY;
+        }
+
+        Vector_Status s = vector_growth(vector);
+        if(s != VECTOR_SUCCESS){
+            return s;
+        }
+    }
+
+    // Move the Elements
+    char *insert_address    = (char *)vector->data + idx * vector->elem_size;
+    size_t elements_to_move = vector->length - idx;
+    size_t bytes_to_move    = elements_to_move * vector->elem_size;
+
+    memmove(insert_address + vector->elem_size, insert_address, bytes_to_move);
+
+    // Insert the new one
+    memcpy(insert_address, in_value, vector->elem_size);
+    vector->length++;
+
+    return VECTOR_SUCCESS;
+}
+
+
+Vector_Status vector_erase(Vector *vector, size_t idx, void *out_value)
+{
+    // Invalid Input
+    if(vector == NULL){
+        return VECTOR_ERR_NULL_PTR;
+    }
+
+    if(idx >= vector->length){
+        return VECTOR_ERR_OUT_OF_BOUNDS;
+    }
+
+    char *erase_address = (char *)vector->data + idx * vector->elem_size;
+    size_t elements_to_move = vector->length - idx - 1;
+    size_t bytes_to_move = elements_to_move * vector->elem_size;
+
+    // Save element if Needed
+    if(out_value != NULL)
+    {
+        memcpy(out_value, erase_address, vector->elem_size);
+    }
+
+    // Move the Elements
+    memmove(erase_address, erase_address + vector->elem_size, bytes_to_move);
+    vector->length--;
+
+    return VECTOR_SUCCESS;
+}
+
+
 // ===========================================================================
 // ===------------------------ Capacity Section ---------------------------===
 // ===========================================================================

@@ -194,4 +194,25 @@ Vector_Status vector_reserve(Vector *vector, size_t new_capacity);
 **/
 Vector_Status vector_shrink_to_fit(Vector *vector);
 
+
+/**
+ * Insert new Value at the idx potition.
+ *
+ * Return:
+ *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
+ *  VECTOR_ERR_ALLOC | VECTOR_ERR_OVERFLOW
+ *  VECTOR_ERR_OUT_OF_BOUNDS | VECTOR_ERR_MAX_CAPACITY
+**/
+Vector_Status vector_insert(Vector *vector, size_t idx, void *in_value);
+
+
+/**
+ * Remove an item from the Vector and save it to a address. If you do not want result pass NULL
+ *
+ * Return:
+ *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR 
+**/
+Vector_Status vector_erase(Vector *vector, size_t idx, void *out_value);
+
+
 #endif
