@@ -1,10 +1,9 @@
-#include "vector.h"
-
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
 
-
+#define __DEVELOPMENT_VECTOR__
+#include "vector.h"
 
 // ===========================================================================
 // ===------------------------ Constractor Section ------------------------=== 

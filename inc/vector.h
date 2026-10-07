@@ -12,12 +12,23 @@
 
 #define DEFAULT_CAPACITY 8 // Default Capacity
 
+
+// Opaque Pointer + Raw access in Unit Testing
+#if defined(__UNIT_TEST_VECTOR__) || defined(__DEVELOPMENT_VECTOR__)
+
 typedef struct Vector {
     void *data;       // The actual Vector. It holds the data
     size_t elem_size; // Size of user data that want to store
     size_t length;    // The current length of Vector
     size_t capacity;  // The actual malloced length of Vector
 } Vector;
+
+#else
+
+typedef struct Vector Vector;
+
+#endif
+
 
 
 // Error codes for Vector
