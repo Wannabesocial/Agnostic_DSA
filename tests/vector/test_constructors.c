@@ -44,5 +44,22 @@ static void test_create_default()
 
 static void test_create_reserve()
 {
+    Vector *vector = NULL;
+    size_t capacity = 10;
 
+    assert(vector_create_reserve(NULL, 0, 0) == VECTOR_ERR_NULL_PTR);
+    assert(vector_create_reserve(&vector, 0, 0) == VECTOR_ERR_INVALID_SIZE);
+    assert(vector_create_reserve(&vector, sizeof(Point2), 0) == VECTOR_ERR_INVALID_SIZE); 
+    assert(vector_create_reserve(&vector, 0, 3) == VECTOR_ERR_INVALID_SIZE); 
+    assert(vector_create_reserve(&vector, SIZE_MAX, SIZE_MAX) == VECTOR_ERR_OVERFLOW);
+
+    assert(vector_create_reserve(&vector, sizeof(Point2), capacity) == VECTOR_SUCCESS
+        && vector != NULL
+        && vector->data != NULL
+        && vector->elem_size == sizeof(Point2)
+        && vector->capacity == capacity
+        && vector->length == 0
+    );
+
+    assert(vector_destroy(vector) == VECTOR_SUCCESS);
 }    
