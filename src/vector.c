@@ -385,7 +385,7 @@ Vector_Status vector_shrink_to_fit(Vector *vector)
     }
 
     // Do nothing
-    if(vector->capacity == vector->length){
+    if(vector->length == 0 || vector->capacity == vector->length){
         return VECTOR_SUCCESS;
     } 
 

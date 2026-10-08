@@ -197,7 +197,7 @@ Vector_Status vector_reserve(Vector *vector, size_t new_capacity);
 
 
 /**
- * Does reallocation so the Capacity mach the Lenght
+ * Does reallocation so the Capacity mach the Lenght. If `length` is 0 or equel to `capacity` does nothing
  *
  * Return:
  *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
