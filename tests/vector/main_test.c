@@ -11,7 +11,7 @@ int main()
         test_vector_destructors();
     //    test_vector_modifiers();
         test_vector_element_access();
-    //    test_vector_capacity();
+        test_vector_capacity();
     }    
 
     printf("\n---All Test [PASSED]---\n");
