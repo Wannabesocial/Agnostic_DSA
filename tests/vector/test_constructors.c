@@ -8,7 +8,6 @@
 static void test_create_default();
 static void test_create_reserve();
 
-
 void test_vector_constructors()
 {
     printf("Run Constructors Tests...\n");
@@ -50,7 +49,7 @@ static void test_create_reserve()
     assert(vector_create_reserve(NULL, 0, 0) == VECTOR_ERR_NULL_PTR);
     assert(vector_create_reserve(&vector, 0, 0) == VECTOR_ERR_INVALID_SIZE);
     assert(vector_create_reserve(&vector, sizeof(Point2), 0) == VECTOR_ERR_INVALID_SIZE); 
-    assert(vector_create_reserve(&vector, 0, 3) == VECTOR_ERR_INVALID_SIZE); 
+    assert(vector_create_reserve(&vector, 0, capacity) == VECTOR_ERR_INVALID_SIZE); 
     assert(vector_create_reserve(&vector, SIZE_MAX, SIZE_MAX) == VECTOR_ERR_OVERFLOW);
 
     assert(vector_create_reserve(&vector, sizeof(Point2), capacity) == VECTOR_SUCCESS
