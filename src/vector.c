@@ -108,15 +108,8 @@ Vector_Status vector_destroy(Vector *vector)
 // ===------------------------ Modifiers Section --------------------------===
 // ===========================================================================
 
-/**
- * Helpfull for growing the vector when `capacity` == `length`
- * 
- * Param:
- *  `vector` Is never `NULL`.
- * Return:
- *  VECTOR_SUCCESS | VECTOR_ERR_ALLOC | VECTOR_ERR_OVERFLOW 
-*/
-static Vector_Status vector_growth(Vector *vector)
+
+Vector_Status vector_growth(Vector *vector)
 {
 // TODO: (In Feature) If overflow take a smaller value for length so you do not have that
 // If canot realloc with better value take a even smaller value for lenght 
@@ -124,7 +117,9 @@ static Vector_Status vector_growth(Vector *vector)
     size_t new_capacity = (vector->capacity > (SIZE_MAX >> 1))
         ? SIZE_MAX               // Canot double (overflow). (cap * 2 > MAX)
         : vector->capacity << 1; // Double the capacity
- 
+    
+    // printf("\n\nOld Capacity:%lu New Capacity:%lu\n\n", vector->capacity, new_capacity);
+
     if(new_capacity > SIZE_MAX / vector->elem_size){
         return VECTOR_ERR_OVERFLOW;
     }
@@ -197,20 +192,6 @@ Vector_Status vector_pop_back(Vector *vector, void *out_value)
 
     return VECTOR_SUCCESS;
 }
-
-
-#if 1 == 0
-Vector_Status vector_clear(Vector *vector)
-{
-    // Invalid user Input
-    if(vector == NULL){
-        return VECTOR_ERR_NULL_PTR;
-    }
-
-    vector->length = 0;
-    return VECTOR_SUCCESS;
-}
-#endif
 
 
 Vector_Status vector_resize(Vector *vector, size_t new_size)

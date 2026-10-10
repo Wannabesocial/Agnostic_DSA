@@ -81,17 +81,19 @@ Vector_Status vector_create_reserve(Vector **vector, size_t elem_size, size_t ca
 Vector_Status vector_destroy(Vector *vector);
 
 
-#if 1 == 0
+#if defined(__UNIT_TEST_VECTOR__) || defined(__DEVELOPMENT_VECTOR__)
+
 /**
- * Does not dealocate `void *data` itself. Just set `length` to 0.
- *
+ * Helpfull for growing the vector when `capacity` == `length`
+ * 
+ * Param:
+ *  `vector` Is never `NULL`.
  * Return:
- *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR
- *
- * Note: Performance function. Manualy Dealocate the data if needed before you call or you will have memory leaks.
+ *  VECTOR_SUCCESS | VECTOR_ERR_ALLOC | VECTOR_ERR_OVERFLOW 
 */
-Vector_Status vector_clear(Vector *vector);
-#endif 
+Vector_Status vector_growth(Vector *vector);
+
+#endif
 
 
 /**
@@ -104,7 +106,7 @@ Vector_Status vector_clear(Vector *vector);
  *  VECTOR_ERR_ALLOC | VECTOR_ERR_MAX_CAPACITY
  *  VECTOR_ERR_OVERFLOW
  *
- * Note: It does a shallow copy of the `value` you pass in the Vector. It uses `memcpy` to save data to Vector..
+ * Note: It does a shallow copy of the `value` you pass in the Vector. It uses `memcpy` to save data to Vector.
 */
 Vector_Status vector_push_back(Vector *vector, const void *in_value);
 
@@ -221,7 +223,7 @@ Vector_Status vector_insert(Vector *vector, size_t idx, void *in_value);
  * Remove an item from the Vector and save it to a address. If you do not want result pass NULL
  *
  * Return:
- *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR 
+ *  VECTOR_SUCCESS | VECTOR_ERR_NULL_PTR | VECTOR_ERR_OUT_OF_BOUNDS
 **/
 Vector_Status vector_erase(Vector *vector, size_t idx, void *out_value);
 
