@@ -19,7 +19,7 @@ A type-agnostic Data Structures library implemented in C11\. Built with strict m
 | **Vector**     | Dynamic Array | [Vector Docs](docs/vector.md) |
 
 
-## 🛠️ Global Build &amp; Testing
+## Global Build &amp; Testing
 ```bash
 make                            # Builds all Modules
 make 'module1' 'module2' ...    # Builds Specific Modules
