@@ -6,7 +6,7 @@
 #include "vector.h"
 
 // ===========================================================================
-// ===------------------------ Constractor Section ------------------------=== 
+// ===------------------------ Constructor Section ------------------------=== 
 // ===========================================================================
 
 Vector_Status vector_create_default(Vector **vector, size_t elem_size)
@@ -85,7 +85,7 @@ Vector_Status vector_create_reserve(Vector **vector, size_t elem_size, size_t ca
 
 
 // ==========================================================================
-// ===---------------------- Destractor Section --------------------------===
+// ===---------------------- Destructor Section --------------------------===
 // ==========================================================================
 
 Vector_Status vector_destroy(Vector *vector)
@@ -226,14 +226,14 @@ Vector_Status vector_resize(Vector *vector, size_t new_size)
 }
 
 
-Vector_Status vector_insert(Vector *vector, size_t idx, void *in_value)
+Vector_Status vector_insert(Vector *vector, size_t idx, const void *in_value)
 {
     // Invalid Input
     if(vector == NULL || in_value == NULL){
         return VECTOR_ERR_NULL_PTR;
     }
 
-    if(idx >= vector->length){
+    if(idx > vector->length){
         return VECTOR_ERR_OUT_OF_BOUNDS;
     }
 
@@ -277,9 +277,9 @@ Vector_Status vector_erase(Vector *vector, size_t idx, void *out_value)
         return VECTOR_ERR_OUT_OF_BOUNDS;
     }
 
-    char *erase_address = (char *)vector->data + idx * vector->elem_size;
+    char *erase_address     = (char *)vector->data + idx * vector->elem_size;
     size_t elements_to_move = vector->length - idx - 1;
-    size_t bytes_to_move = elements_to_move * vector->elem_size;
+    size_t bytes_to_move    = elements_to_move * vector->elem_size;
 
     // Save element if Needed
     if(out_value != NULL)

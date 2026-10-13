@@ -10,7 +10,7 @@ WARN     := -Wall -Wextra -Wpedantic \
 # Flags Εντοπισμού Σφαλμάτων & Μνήμης (Sanitizers)
 DEBUG    := -g3 -fsanitize=address,undefined
 
-CFLAGS   := $(STD) $(WARN) $(DEBUG) -Iinc
+CFLAGS   := $(STD) $(WARN) $(DEBUG) -Iinc -Itests
 
 # --- Φάκελοι ---
 SRC_DIR  := src

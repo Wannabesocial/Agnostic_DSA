@@ -87,8 +87,8 @@ static void test_insert()
         assert(vector_insert(vector, 0, NULL) == VECTOR_ERR_NULL_PTR);
         assert(vector_insert(NULL, 0, &p) == VECTOR_ERR_NULL_PTR);
         
-        assert(vector_insert(vector, 0, &p) == VECTOR_ERR_OUT_OF_BOUNDS);
         assert(vector_insert(vector, 1, &p) == VECTOR_ERR_OUT_OF_BOUNDS);
+        assert(vector_insert(vector, 2, &p) == VECTOR_ERR_OUT_OF_BOUNDS);
 
         for(int i = 0; i < 7; i++){
             p.x = p.y = i;
@@ -99,7 +99,7 @@ static void test_insert()
         assert(vector_insert(vector, 1, &p) == VECTOR_SUCCESS);
         assert(vector_insert(vector, 4, &p) == VECTOR_SUCCESS); 
         
-        assert(vector->capacity = DEFAULT_CAPACITY * 2 && vector->length == 9);
+        assert(vector->capacity == DEFAULT_CAPACITY * 2 && vector->length == 9);
         ptr = (Point2 *)vector->data;
         assert((ptr[0].x == 0   && ptr[0].y == 0)
             && (ptr[1].x == 100 && ptr[1].y == 100)
@@ -110,6 +110,14 @@ static void test_insert()
             && (ptr[6].x == 4   && ptr[6].y == 4)
             && (ptr[7].x == 5   && ptr[7].y == 5)
             && (ptr[8].x == 6   && ptr[8].y == 6)
+        );
+
+        p.x = p.y = -2;
+        assert(vector_insert(vector, 9, &p) == VECTOR_SUCCESS);
+        ptr = (Point2 *)vector->data;
+        assert(vector->capacity == DEFAULT_CAPACITY * 2
+            && vector->length == 10
+            && (ptr[9].x == -2 && ptr[9].y == -2)
         );
 
         vector->length   = SIZE_MAX;

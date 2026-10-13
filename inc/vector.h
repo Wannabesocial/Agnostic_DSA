@@ -1,7 +1,7 @@
 /**
- * This a Library for the emplemetation of a Vector Data Structure in pure C that can hold any type of data type.
+ * This a Library for the implementation of a Vector Data Structure in pure C that can hold any type of data type.
  * For this reason the ownership and the obligation of the data goes to User and not the Data Structure.
- * This emplemetation does not allocate memory indivitualy for every data type. Works with shallow copy.
+ * This emplemetation does not allocate memory individually for every data type. Works with shallow copy.
 **/
 
 #ifndef VECTOR_H
@@ -216,7 +216,7 @@ Vector_Status vector_shrink_to_fit(Vector *vector);
  *  VECTOR_ERR_ALLOC | VECTOR_ERR_OVERFLOW
  *  VECTOR_ERR_OUT_OF_BOUNDS | VECTOR_ERR_MAX_CAPACITY
 **/
-Vector_Status vector_insert(Vector *vector, size_t idx, void *in_value);
+Vector_Status vector_insert(Vector *vector, size_t idx, const void *in_value);
 
 
 /**
