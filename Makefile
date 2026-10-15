@@ -19,7 +19,7 @@ TEST_DIR := tests
 BIN_DIR  := bin
 
 # --- ΛΙΣΤΑ DSA MODULES ---
-MODULES  := vector
+MODULES  := vector bitset
 
 # --- ΚΟΙΝΑ ΑΡΧΕΙΑ (COMMON FILES) ---
 COMMON_SOURCES := 
